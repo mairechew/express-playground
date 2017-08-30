@@ -1,5 +1,8 @@
 var express = require ('express')
 var app = express()
+var calculate = require('./calculate.js')
+var area = require('./area.js')
+var sum = require('./sum.js')
 var piNum = Math.PI.toString()
 
 app.get('/', function (request,response) {
@@ -11,29 +14,24 @@ app.get('/math/pi', function (request,response) {
   response.send(piNum)
 })
 
-app.get('/math/calculate/:operation/:x/:y', function (request, response) {
-  var operation = request.params.operation;
-  var num1 = Number(request.params.x);
-  var num2 = Number(request.params.y);
-  var total = 0;
-  if (operation == 'add') {
-    total = num1+num2
-  } else if (operation == 'subtract') {
-    total = num1 - num2
-  } else if (operation == 'multiply') {
-    total = num1 * num2
-  } else if (operation == 'divide') {
-    total = (num1 / num2)
-  }
-  response.send(total.toString())
+app.use(calculate)
+app.use(area)
+app.use(sum)
+
+
+
+
+app.get('/math/volume/:length/:width/:height',
+ function(request,response) {
+  var length = request.params.length;
+  var width = request.params.width;
+  var height = request.params.height;
+  var area = Number(length*width*height)
+  response.send("The volume of a " + length + "x" + width + "x" + height + " rectangle is " + area.toString())
 })
 
-// app.post('/math/sum', function(request,response) {
-// ...declare variable
-// ...set variable.id to json object.length
-// ...push json object to body of request
-// ...send response to server
-// })
+
+
 
 
 app.get('*', function (request,response) {
